@@ -1,31 +1,43 @@
 import createNavigation from './navigation.js'
 createNavigation()
 
+async function init() {
+    const contentElement = document.querySelector('#content')
+    const usersList = await createUsersList()
 
+    contentElement.append(usersList)
+}
+init()
 
+async function createUsersList() {
+    const usersList = document.createElement('ul')
+    usersList.classList.add('users-list')
 
+    const res = await fetch('https://jsonplaceholder.typicode.com/users?_limit=10&expand=post')
+    const users = await res.json()
+    console.log(users)
 
-fetch('https://jsonplaceholder.typicode.com/users')
-    .then(res => res.json())
-    .then(data => {
-        console.log(data);
+    users.forEach(user => {
+        const userElement = document.createElement('li')
+        userElement.classList.add('user')
 
-        const users = data.map(user => {
-            return `
-            <div class='user-info'>
-                <p>ID: ${user.id}</p>  
-                <a href="user-info.html?id=${user.id}">${user.name}</a>
-            </div>
-            `;
-        }).join('');
+        const userName = document.createElement('a')
+        userName.classList.add('user-name')
+        userName.textContent = user.name
+        userName.href = `user-info.html?user_id=${user.id}`
+        userElement.append(userName)
 
-        const usersPage = document.querySelector('#content');
-        usersPage.innerHTML = `
-            <h1>Users</h1>
-            ${users}
-        `;
+        const userNickname = document.createElement('span')
+        userNickname.classList.add('user-nickname')
+        userNickname.textContent = user.username
+        userElement.append(userNickname)
+
+        usersList.append(userElement)
     })
-    .catch(error => console.error('Error fetching users:', error));
+
+    return usersList
+}
+
 
 
 

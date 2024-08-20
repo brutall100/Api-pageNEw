@@ -2,68 +2,54 @@ import createNavigation from './navigation.js'
 createNavigation()
 
 
+async function init() {
+    const content = document.querySelector('#content')
+    const pageTitle = createPageTitle('Posts:')
+    const postsList = await createPostsList()
 
+    content.append(pageTitle, postsList)
+}
 
+init()
 
-fetch('https://jsonplaceholder.typicode.com/posts')
-    .then(res => res.json())
-    .then(posts => {
-        console.log(posts);
+function createPageTitle(text) {
+    const element = document.createElement('h1')
+    element.textContent = text
+    element.classList.add('page-title')
 
-        // Create an array of unique userIds from the posts
-        const userIds = [...new Set(posts.map(post => post.userId))];
-        const postIds = posts.map(post => post.id);
+    return element
+}
 
-        // Fetch all users whose IDs are in the userIds array
-        const userPromises = userIds.map(id =>
-            fetch(`https://jsonplaceholder.typicode.com/users/${id}`).then(res => res.json())
-        );
+async function createPostsList() {
+    const res = await fetch('https://jsonplaceholder.typicode.com/posts?_limit=20&_expand=user&_embed=comments')
+    const posts = await res.json()
 
-        // Fetch comments count for each post
-        const commentPromises = postIds.map(id =>
-            fetch(`https://jsonplaceholder.typicode.com/posts/${id}/comments`)
-                .then(res => res.json())
-                .then(comments => ({ postId: id, count: comments.length }))
-        );
+    const postsList = document.createElement('ul')
+    postsList.classList.add('posts-list')
 
-        // Wait for all user and comment fetch requests to complete
-        Promise.all([Promise.all(userPromises), Promise.all(commentPromises)])
-            .then(([users, commentsCount]) => {
-                // Create a map of userId to user data
-                const userMap = {};
-                users.forEach(user => {
-                    userMap[user.id] = user;
-                });
+    posts.forEach(post => {
+        const { title, userId, id, user, comments } = post
 
-                // Create a map of postId to comment count
-                const commentsMap = {};
-                commentsCount.forEach(({ postId, count }) => {
-                    commentsMap[postId] = count;
-                });
+        const postItem = document.createElement('li')
+        postItem.classList.add('post-item')
+        postsList.append(postItem)
 
-                // Now map over the posts to create the HTML
-                const postsHtml = posts.map(post => {
-                    const author = userMap[post.userId];
-                    const commentCount = commentsMap[post.id] || 0; // Default to 0 if no comments
-                    return `
-                    <div class='post-info'>
-                        <p>ID: ${post.id}</p>
-                        <a href="post-info.html?id=${post.id}">${post.title}</a>
-                        <p><strong>Comments:</strong> <a href="post-comments.html?postId=${post.id}">${commentCount} comments</a></p>
-                        <p><strong>Author:</strong> <a href="user-info.html?id=${author.id}">${author.name}</a></p>
-                    </div>
-                    `;
-                }).join('');
+        const postLink = document.createElement('a')
+        postLink.classList.add('post-link')
+        postLink.href = `./post.html?post_id=${id}`
+        postLink.textContent = `${id}. ${title} (${comments.length})`
 
-                const postsPage = document.querySelector('#content');
-                postsPage.innerHTML = `
-                    <h1>Posts</h1>
-                    ${postsHtml}
-                `;
-            })
-            .catch(error => console.error('Error fetching user or comments data:', error));
+        const authorLink = document.createElement('a')
+        authorLink.classList.add('author-link')
+        authorLink.href = `./user-info.html?user_id=${userId}`
+        authorLink.textContent = user.name
+
+        postItem.append(postLink, ' - ', authorLink)
     })
-    .catch(error => console.error('Error fetching posts:', error));
+
+    return postsList
+}
+
 
 
 

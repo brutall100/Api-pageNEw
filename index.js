@@ -1,3 +1,2 @@
-import createNavigation from './navigation.js';
-
-createNavigation();
+import createNavigation from './navigation.js'
+createNavigation()
