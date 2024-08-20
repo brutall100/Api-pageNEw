@@ -1,16 +1,17 @@
-// navigation.js
+export default function createNavigation() {
+    const navItems = [
+        { name: 'Home', link: './' },
+        { name: 'Posts', link: './posts.html' },
+        { name: 'Users', link: './users.html' },
+        { name: 'Albums', link: './albums.html' }
+    ];
 
-const navItems = [
-    { name: 'Home', link: './' },
-    { name: 'Posts', link: './posts.html' },
-    { name: 'Users', link: './users.html' },
-    { name: 'Albums', link: './albums.html' }
-];
+    // Create the navContainer element dynamically
+    const navContainer = document.createElement('nav');
+    navContainer.id = 'nav-container';
+    navContainer.classList.add('nav-container'); 
 
-function createNavigation() {
-    const navContainer = document.getElementById('nav-container');
     const currentPath = window.location.pathname;
-
 
     const ulElement = document.createElement('ul');
 
@@ -21,16 +22,18 @@ function createNavigation() {
         aElement.textContent = item.name;
         aElement.href = item.link;
 
-
         if (currentPath.includes(item.link)) {
             aElement.classList.add('active');
         }
 
-        liElement.appendChild(aElement);
-        ulElement.appendChild(liElement);
+        liElement.append(aElement);
+        ulElement.append(liElement);
     });
-    navContainer.appendChild(ulElement);
+
+    navContainer.append(ulElement);
+    
+    // Append the newly created navContainer to the body (or any other desired element)
+    document.body.prepend(navContainer);
 }
 
-createNavigation();
 

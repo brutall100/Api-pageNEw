@@ -1,3 +1,10 @@
+import createNavigation from './navigation.js'
+createNavigation()
+
+
+
+
+
 fetch('https://jsonplaceholder.typicode.com/users')
     .then(res => res.json())
     .then(data => {

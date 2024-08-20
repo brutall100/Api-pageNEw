@@ -1,3 +1,9 @@
+import createNavigation from './navigation.js'
+createNavigation()
+
+
+
+
 // Function to get URL parameters
 function getQueryParam(param) {
     const urlParams = new URLSearchParams(window.location.search);
