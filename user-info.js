@@ -5,7 +5,8 @@ async function init() {
     const contentElement = document.querySelector('#content')
     const userContent = await createUserContent()
     const postsList = await createPostsList()
-    contentElement.append(userContent, postsList)
+    const albumsList = await createAlbumsList()
+    contentElement.append(userContent, postsList, albumsList)
 }
 
 init()
@@ -111,8 +112,9 @@ async function createPostsList() {
         postItem.classList.add('post-item')
         postsList.append(postItem)
 
-        const postTitle = document.createElement('h3')
+        const postTitle = document.createElement('a')
         postTitle.classList.add('post-title')
+        postTitle.href = `./post-info.html?post_id=${post.id}`
         postTitle.textContent = title
 
         const postBody = document.createElement('p')
@@ -124,6 +126,50 @@ async function createPostsList() {
     })
     return postSection
 }
+
+async function createAlbumsList() {
+    const queryParams = location.search
+    const urlParams = new URLSearchParams(queryParams)
+    const userId = urlParams.get('user_id')
+
+    const res = await fetch(`https://jsonplaceholder.typicode.com/users/${userId}?_embed=albums`)
+    const user = await res.json() // Tai grąžina vartotojo objektą su įdėtais albumais
+    console.log(user.albums) // Tai parodo albumų sąrašą
+
+    if (!user.albums || user.albums.length === 0) {
+        console.log('No albums found for this user.')
+        return
+    }
+
+    const albumSection = document.createElement('section')
+    albumSection.classList.add('album-section')
+
+    const albumAuthor = document.createElement('h2')
+    albumAuthor.classList.add('album-author')
+    albumAuthor.textContent = `Albums by ${user.name}`
+    albumSection.append(albumAuthor)
+
+    const albumList = document.createElement('ul')
+    albumList.classList.add('album-list')
+
+    user.albums.forEach(album => {
+        const albumItem = document.createElement('li')
+        albumItem.classList.add('album-item')
+
+        const albumLink = document.createElement('a')
+        albumLink.href = `album-info.html?album_id=${album.id}`
+        albumLink.textContent = album.title 
+
+        albumItem.append(albumLink) 
+        albumList.append(albumItem) 
+    })
+
+    albumSection.append(albumList)
+
+    return albumSection
+}
+
+
 
 
 
