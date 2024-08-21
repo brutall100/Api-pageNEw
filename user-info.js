@@ -4,7 +4,8 @@ createNavigation()
 async function init() {
     const contentElement = document.querySelector('#content')
     const userContent = await createUserContent()
-    contentElement.append(userContent)
+    const postsList = await createPostsList()
+    contentElement.append(userContent, postsList)
 }
 
 init()
@@ -17,7 +18,7 @@ async function createUserContent() {
     const urlParams = new URLSearchParams(queryParams)
     const userId = urlParams.get('user_id')
 
-    const res = await fetch(`https://jsonplaceholder.typicode.com/users/${userId}`)
+    const res = await fetch(`https://jsonplaceholder.typicode.com/users/${userId}?_embed=posts&_embed=albums`)
     const user = await res.json()
     console.log(user)
 
@@ -78,6 +79,51 @@ async function createUserContent() {
     return userContent
 }
 
+async function createPostsList() {
+    const queryParams = location.search
+    const urlParams = new URLSearchParams(queryParams)
+    const userId = urlParams.get('user_id')
+
+    const res = await fetch(`https://jsonplaceholder.typicode.com/users/${userId}?_embed=posts&_embed=albums`)
+    const posts = await res.json()
+    console.log(posts.posts)
+    console.log(posts.name)
+
+    const author = posts.name
+    
+
+    const postSection = document.createElement('section')
+    postSection.classList.add('post-section')
+
+    const postAuthor = document.createElement('h2')
+    postAuthor.classList.add('post-author')
+    postAuthor.textContent = `Posts by ${author}`
+    postSection.append(postAuthor)
+
+    const postsList = document.createElement('ol')
+    postsList.classList.add('posts-list')
+    postSection.append(postsList)
+
+    posts.posts.forEach(post => {
+        const { title, body} = post
+
+        const postItem = document.createElement('li')
+        postItem.classList.add('post-item')
+        postsList.append(postItem)
+
+        const postTitle = document.createElement('h3')
+        postTitle.classList.add('post-title')
+        postTitle.textContent = title
+
+        const postBody = document.createElement('p')
+        postBody.classList.add('post-body')
+        postBody.textContent = body
+
+        postItem.append(postTitle, postBody)
+
+    })
+    return postSection
+}
 
 
 

@@ -36,7 +36,7 @@ async function createPostsList() {
 
         const postLink = document.createElement('a')
         postLink.classList.add('post-link')
-        postLink.href = `./post.html?post_id=${id}`
+        postLink.href = `./post-info.html?post_id=${id}`
         postLink.textContent = `${id}. ${title} (${comments.length})`
 
         const authorLink = document.createElement('a')
