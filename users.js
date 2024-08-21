@@ -13,9 +13,16 @@ async function createUsersList() {
     const usersList = document.createElement('ul')
     usersList.classList.add('users-list')
 
-    const res = await fetch('https://jsonplaceholder.typicode.com/users?_limit=10&expand=post')
-    const users = await res.json()
-    console.log(users)
+    const usersRes = await fetch('https://jsonplaceholder.typicode.com/users')
+    const users = await usersRes.json()
+
+    const postsRes = await fetch('https://jsonplaceholder.typicode.com/posts')
+    const posts = await postsRes.json()
+
+    const postCountByUser = posts.reduce((acc, post) => {
+        acc[post.userId] = (acc[post.userId] || 0) + 1
+        return acc
+    }, {})
 
     users.forEach(user => {
         const userElement = document.createElement('li')
@@ -23,7 +30,7 @@ async function createUsersList() {
 
         const userName = document.createElement('a')
         userName.classList.add('user-name')
-        userName.textContent = user.name
+        userName.textContent = `${user.name} `
         userName.href = `user-info.html?user_id=${user.id}`
         userElement.append(userName)
 
@@ -32,23 +39,16 @@ async function createUsersList() {
         userNickname.textContent = user.username
         userElement.append(userNickname)
 
+        const userPostCount = document.createElement('span')
+        userPostCount.classList.add('user-post-count')
+        userPostCount.textContent = ` Posts: ${postCountByUser[user.id] || 0}`
+        userElement.append(userPostCount)
+
         usersList.append(userElement)
     })
 
     return usersList
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
