@@ -36,7 +36,7 @@ async function createUsersList() {
 
         const userNickname = document.createElement('span')
         userNickname.classList.add('user-nickname')
-        userNickname.textContent = user.username
+        userNickname.textContent = ` (${user.username})`
         userElement.append(userNickname)
 
         const userPostCount = document.createElement('span')
