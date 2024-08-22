@@ -157,7 +157,7 @@ async function createAlbumsList() {
         albumItem.classList.add('album-item')
 
         const albumLink = document.createElement('a')
-        albumLink.href = `album-info.html?album_id=${album.id}`
+        albumLink.href = `albums.html?album_id=${album.id}`
         albumLink.textContent = album.title 
 
         albumItem.append(albumLink) 

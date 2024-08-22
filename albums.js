@@ -2,81 +2,58 @@ import createNavigation from './navigation.js'
 createNavigation()
 
 
+async function init() {
+    const content = document.querySelector('#content')
+    const pageTitle = createPageTitle('Albums:')
+    const albumsList = await createAlbumsList()
 
+    content.append(pageTitle, albumsList)
+}
 
-// // Function to get URL parameters
-// function getQueryParam(param) {
-//     const urlParams = new URLSearchParams(window.location.search);
-//     return urlParams.get(param);
-// }
+init()
 
-// // Fetch albums data
-// fetch('https://jsonplaceholder.typicode.com/albums')
-//     .then(res => res.json())
-//     .then(albums => {
-//         console.log(albums);
+function createPageTitle(text) {
+    const element = document.createElement('h1')
+    element.textContent = text
+    element.classList.add('page-title')
+    return element
+}
 
-//         // Extract unique user IDs from albums
-//         const userIds = [...new Set(albums.map(album => album.userId))];
-//         const albumIds = albums.map(album => album.id);
+async function createAlbumsList() {
+    const res = await fetch('https://jsonplaceholder.typicode.com/albums?_limit=100&_expand=user')
+    const albums = await res.json()
+    console.log(albums)
 
-//         // Fetch user data for each user ID
-//         const userPromises = userIds.map(id =>
-//             fetch(`https://jsonplaceholder.typicode.com/users/${id}`).then(res => res.json())
-//         );
+    const albumsList = document.createElement('ul')
+    albumsList.classList.add('albums-list')
 
-//         // Fetch photo data for each album
-//         const photoPromises = albumIds.map(id =>
-//             fetch(`https://jsonplaceholder.typicode.com/albums/${id}/photos`)
-//                 .then(res => res.json())
-//                 .then(photos => ({
-//                     albumId: id,
-//                     count: photos.length,
-//                     thumbnail: photos[0]?.thumbnailUrl // Use the first photo's thumbnail as the representative image
-//                 }))
-//         );
+    albums.forEach(album => {
+        const { title, user, id } = album
 
-//         // Wait for all user and photo fetch requests to complete
-//         Promise.all([Promise.all(userPromises), Promise.all(photoPromises)])
-//             .then(([users, photoData]) => {
-//                 // Create a map of userId to user data
-//                 const userMap = {};
-//                 users.forEach(user => {
-//                     userMap[user.id] = user;
-//                 });
+        const albumItem = document.createElement('li')
+        albumItem.classList.add('album-item')
+        albumsList.append(albumItem)
 
-//                 // Create a map of albumId to photo data
-//                 const photoMap = {};
-//                 photoData.forEach(({ albumId, count, thumbnail }) => {
-//                     photoMap[albumId] = { count, thumbnail };
-//                 });
+        const albumLink = document.createElement('a')
+        albumLink.classList.add('album-link')
+        albumLink.href = `./album-info.html?album_id=${id}`
+        albumLink.textContent = `${title} `
+        albumItem.append(albumLink)
 
-//                 // Generate HTML for albums
-//                 const albumsHtml = albums.map(album => {
-//                     const user = userMap[album.userId];
-//                     const { count, thumbnail } = photoMap[album.id] || { count: 0, thumbnail: '' };
-//                     return `
-//                     <div class='album-info'>
-//                         <p><strong>Title:</strong> <a href="album-info.html?id=${album.id}">${album.title}</a></p>
-//                         <p><strong>Created by:</strong> ${user ? user.name : 'Unknown'}</p>
-//                         <p><strong>Number of Photos:</strong> ${count}</p>
-//                         <p><strong>Cover Photo:</strong> <a href="album-info.html?id=${album.id}"><img src="${thumbnail}" alt="${album.title}"></a></p>
-//                     </div>
-//                     `;
-//                 }).join('');
-
-//                 const content = document.querySelector('#content');
-//                 content.innerHTML = `
-//                     <h1>Albums</h1>
-//                     ${albumsHtml}
-//                 `;
-//             })
-//             .catch(error => console.error('Error fetching user or photo data:', error));
-//     })
-//     .catch(error => console.error('Error fetching albums:', error));
+        const authorLink = document.createElement('a')
+        authorLink.classList.add('author-link')
+        authorLink.href = `./user-info.html?user_id=${user.id}`
+        authorLink.textContent = user.name
+        albumItem.append(' - ', authorLink)
 
 
 
+        
+    })
+    
+
+    return albumsList
+}
 
 
 
