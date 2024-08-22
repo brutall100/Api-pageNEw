@@ -1,57 +1,94 @@
-/* General body styling */
-body {
-    font-family: Arial, sans-serif;
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
 }
 
-/* Navigation container */
 #nav-container {
     background-color: #333;
-    padding: 10px 0;
+    padding: 10px;
+    font-family: Arial, sans-serif;
 }
 
-/* Style for the <ul> element */
 #nav-container ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
-    display: flex; /* Arrange the items horizontally */
-    justify-content: center; /* Center the items */
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
 }
 
-/* Style for the <li> elements */
 #nav-container ul li {
     margin: 0 15px;
 }
 
-/* Style for the <a> elements */
 #nav-container ul li a {
+    color: #fff;
     text-decoration: none;
-    color: white;
-    font-size: 18px;
-    padding: 8px 15px;
-    display: block;
-    transition: background-color 0.3s, color 0.3s; /* Smooth transition on hover */
+    font-size: 16px;
+    padding: 8px 12px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
 }
 
-/* Hover effect for the <a> elements */
 #nav-container ul li a:hover {
     background-color: #555;
-    color: #fff;
-    border-radius: 5px;
 }
 
-/* Active link styling */
 #nav-container ul li a.active {
     background-color: #007bff;
-    color: white;
-    border-radius: 5px;
 }
 
-/* Style the heading */
-h1 {
-    text-align: center;
-    color: #333;
+/* Styles for the Search Form */
+.search-form {
+    display: flex;
+    align-items: center;
+}
+
+.search-form input[type="text"] {
+    padding: 6px 12px;
+    border-radius: 4px 0 0 4px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+.search-form button {
+    padding: 6px 12px;
+    border-radius: 0 4px 4px 0;
+    border: 1px solid #007bff;
+    background-color: #007bff;
+    color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.search-form button:hover {
+    background-color: #0056b3;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    #nav-container ul {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    #nav-container ul li {
+        margin: 10px 0;
+    }
+
+    .search-form {
+        margin-top: 10px;
+        width: 100%;
+    }
+
+    .search-form input[type="text"],
+    .search-form button {
+        width: 100%;
+        margin-top: 5px;
+    }
 }
